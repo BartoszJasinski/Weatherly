@@ -41,7 +41,7 @@ final class UIConstants
 
     // Search input
     static let minimumSearchTextLength = 3
-    static let debounceTime: TimeInterval = 0.7
+    static let debounceTime: Int = 700
 
     // Table view
     static let distanceFromTableViewBottomWhenRefresh = UIScreen.main.bounds.size.width / 4

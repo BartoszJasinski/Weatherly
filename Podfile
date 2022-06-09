@@ -8,8 +8,10 @@ target 'Weatherly' do
   # Pods for Weatherly
   pod 'RxSwift'
   pod 'RxCocoa'
+  pod 'RxAlamofire'
   pod 'TPKeyboardAvoiding'
   pod 'Charts'
+  pod 'ObjectMapper'
 
   target 'WeatherlyTests' do
     inherit! :search_paths
