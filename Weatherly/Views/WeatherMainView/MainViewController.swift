@@ -11,88 +11,90 @@ import RxCocoa
 
 class MainViewController: UIViewController {
         
-//    var avPlayer: AVPlayer!
-//    var avPlayerLayer: AVPlayerLayer!
-    var searchBar: UISearchBar!
-    var searchResultsTableView: UITableView!
+    var backgroundImageView: UIImageView = {
+        let  backgroundImageView = UIImageView()
+        backgroundImageView.image = UIImage(named: "gradient")
+
+        return backgroundImageView
+    }()
+
+    var searchBar: UISearchBar = {
+        let searchBar = UISearchBar()
+        searchBar.round()
+        searchBar.backgroundColor = .white.withAlphaComponent(0.0)
+
+        if #available(iOS 13.0, *) {
+            searchBar.searchTextField.backgroundColor = .white.withAlphaComponent(0.0)
+        } else {
+            // Fallback on earlier versions
+        }
+
+        searchBar.placeholder = "Search city..."
+        searchBar.translatesAutoresizingMaskIntoConstraints = false
+
+        return searchBar
+    }()
+
+    var searchResultsTableView: UITableView = {
+        let searchResultsTableView = UITableView()
+        searchResultsTableView.register(UITableViewCell.self, forCellReuseIdentifier: "MyCell")
+        searchResultsTableView.round()
+        searchResultsTableView.translatesAutoresizingMaskIntoConstraints = false
+
+        return searchResultsTableView
+    }()
+
     private var locationsTableView: UITableView!
 
     var disposeBag: DisposeBag = DisposeBag()
 
-    private var locationsArray: [Location] = []
-
+    private let locationsArray: BehaviorRelay<[Location]> = BehaviorRelay(value: [])
 
     override func loadView() {
         super.loadView()
-        print("ABC")
 
-        let isoDate = "2022-06-09T19:00:00+02:00"
+        backgroundImageView.frame = view.frame
+        view.addSubview(backgroundImageView)
 
-        let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
-        let date = dateFormatter.date(from: isoDate)!
-        let hour = Calendar.current.component(.hour, from: date)
-        print("\(hour)")
+        setupUI()
 
-        setupView()
-        setupSearchBarLook()
-
-        print("XYZ")
 
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        let nr = NetworkRepository()
+
+        locationsArray.asObservable().bind(to: searchResultsTableView.rx.items(cellIdentifier: "MyCell")) { (_, model: Location, cell: UITableViewCell) in
+                    cell.textLabel?.text = "\(model.localizedName ?? ""), \(model.countryName ?? "")"
+                }
+                .disposed(by: disposeBag)
+
+        searchResultsTableView.rx.itemSelected
+                .subscribe { [self] indexPath in
+                    guard let row = indexPath.element?.row else { return }
+
+                    let storyboard = UIStoryboard(name: "WeatherDetails", bundle: nil)
+                    let vc = storyboard.instantiateViewController(withIdentifier: "weatherDetailsVcId") as! WeatherDetailsViewController
+                    vc.cityKey = locationsArray.value[row].key
+                    vc.cityName = locationsArray.value[row].localizedName
+                    present(vc, animated: true)
+
+                }
+                .disposed(by: disposeBag)
+
     }
 
-//    private func playBackgroundVideo() {
-//        if let filePath = Bundle.main.path(forResource: "01d", ofType: "mp4") {
-//            let filePathUrl = NSURL.fileURL(withPath: filePath)
-//            avPlayer = AVPlayer(url: filePathUrl)
-//            let playerLayer = AVPlayerLayer(player: avPlayer)
-//            playerLayer.frame = backgroundView.bounds
-//            playerLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
-//            NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: self.avPlayer?.currentItem, queue: nil) { (_) in
-//                self.avPlayer?.seek(to: CMTime.zero)
-//                self.avPlayer?.play()
-//            }
-//
-//            backgroundView.layer.addSublayer(playerLayer)
-//            avPlayer?.play()
-//        } else {
-//            print("ERROR")
-//        }
-//    }
-
-}
 
 
+    private func setupUI() {
 
-
-// MARK: Extension for creating UI
-extension MainViewController: UITableViewDelegate, UITableViewDataSource  {
-    private func setupView() {
-//        view = UIView()
-        view.backgroundColor = .systemGreen
-    }
-
-    private func setupSearchBarLook() {
-        searchBar = UISearchBar()
-//        searchBar.sizeToFit()
-//        navigationItem.titleView = searchBar
-//        searchBar.round()
-        searchBar.translatesAutoresizingMaskIntoConstraints = false
-//        searchBar.backgroundColor = .systemBlue
-        searchBar.placeholder = "Search city..."
         view.addSubview(searchBar)
 
         NSLayoutConstraint.activate([
             searchBar.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor),
             searchBar.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor),
             searchBar.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor),
-            searchBar.heightAnchor.constraint(equalToConstant: 100)
+            searchBar.heightAnchor.constraint(equalToConstant: 50)
         ])
 
         searchBar.rx.text.debounce(.milliseconds(UIConstants.debounceTime), scheduler: MainScheduler.instance)
@@ -102,53 +104,20 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource  {
                 })
                 .disposed(by: disposeBag)
 
-//        searchResultsTableView = UITableView()
-//        view.addSubview(searchResultsTableView)
 
-//        NSLayoutConstraint.activate([
-//            searchResultsTableView.leftAnchor.constraint(equalTo: searchBar.layoutMarginsGuide.leftAnchor),
-//            searchResultsTableView.topAnchor.constraint(equalTo: searchBar.layoutMarginsGuide.bottomAnchor),
-//            searchResultsTableView.rightAnchor.constraint(equalTo: searchBar.layoutMarginsGuide.rightAnchor),
-//            searchResultsTableView.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor)
-//        ])
+//        searchResultsTableView.dataSource = self
+//        searchResultsTableView.delegate = self
 
-
-        let barHeight: CGFloat = 200//searchBar.frame.maxY
-        let displayWidth: CGFloat = self.view.frame.width
-        let displayHeight: CGFloat = self.view.frame.height
-//
-        searchResultsTableView = UITableView(frame: CGRect(x: 0, y: barHeight, width: displayWidth, height: displayHeight - barHeight))
-        searchResultsTableView.register(UITableViewCell.self, forCellReuseIdentifier: "MyCell")
-        searchResultsTableView.dataSource = self
-        searchResultsTableView.delegate = self
-        self.view.addSubview(searchResultsTableView)
-        searchResultsTableView.backgroundColor = .systemBlue
-
-
+        view.addSubview(searchResultsTableView)
+        NSLayoutConstraint.activate([
+            searchResultsTableView.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor),
+            searchResultsTableView.topAnchor.constraint(equalTo: searchBar.layoutMarginsGuide.bottomAnchor, constant: 20),
+            searchResultsTableView.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor),
+            searchResultsTableView.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor)
+        ])
+        searchResultsTableView.backgroundColor = .white.withAlphaComponent(0.0)
 
     }
-
-
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("Num: \(indexPath.row)")
-        print("Value: \(locationsArray[indexPath.row].key)")
-        let storyboard = UIStoryboard(name: "WeatherDetails", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "weatherDetailsVcId") as! WeatherDetailsViewController
-        vc.cityKey = locationsArray[indexPath.row].key
-        vc.cityName = locationsArray[indexPath.row].localizedName
-        present(vc, animated: true)
-    }
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        locationsArray.count
-    }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "MyCell", for: indexPath as IndexPath)
-        cell.textLabel!.text = "\(locationsArray[indexPath.row].localizedName ?? ""), \(locationsArray[indexPath.row].countryName ?? "")"
-        return cell
-    }
-
 
 
 }
@@ -156,22 +125,48 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource  {
 
 
 
+// MARK: Extension for creating UI
+//extension MainViewController: UITableViewDelegate, UITableViewDataSource  {
+//
+//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//        print("Num: \(indexPath.row)")
+//        print("Value: \(locationsArray[indexPath.row].key)")
+//        let storyboard = UIStoryboard(name: "WeatherDetails", bundle: nil)
+//        let vc = storyboard.instantiateViewController(withIdentifier: "weatherDetailsVcId") as! WeatherDetailsViewController
+//        vc.cityKey = locationsArray[indexPath.row].key
+//        vc.cityName = locationsArray[indexPath.row].localizedName
+//        present(vc, animated: true)
+//    }
+//
+//    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+//        locationsArray.count
+//    }
+//
+//    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+//        let cell = tableView.dequeueReusableCell(withIdentifier: "MyCell", for: indexPath as IndexPath)
+//        cell.textLabel!.text = "\(locationsArray[indexPath.row].localizedName ?? ""), \(locationsArray[indexPath.row].countryName ?? "")"
+//        return cell
+//    }
+//
+//
+//
+//}
+
+
 extension MainViewController {
     func getListOfCities(city: String)
     {
         NetworkRepository.getCitiesMatchingName(city: city).subscribe(onNext: { [self] locations in
-                    self.locationsArray.removeAll()
+                    locationsArray.accept(locations)
                     locations.forEach
                     {
+                        // THIS IS ONLY DEBUG PRINT
                         print("getListOfCities = " + ($0.localizedName ?? "") + ", " + ($0.countryName ?? "NO COUNTRY"))
-                        self.locationsArray.append($0)
+//                        locationsArray.accept(locationsArray.value.append(locations)
                     }
                     searchResultsTableView.reloadData()
 
-                }/*,
-                onError: { (error) in print(error.localizedDescription  + " YIU")}*/
-                )
-                .disposed(by: disposeBag)
+                }).disposed(by: disposeBag)
     }
 
 

@@ -12,6 +12,6 @@ struct DateUtils {
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
         let date = dateFormatter.date(from: dateText)!
 
-        return "\(Calendar.current.component(component, from: date)):00"
+        return "\(Calendar.current.component(component, from: date))"
     }
 }

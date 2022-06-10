@@ -19,7 +19,8 @@ public class NetworkRepository {
     private static let API_VERSION = "/v1/"
 //    private static let API_KEY = "GIATuLsLemzJHcDfEAawtS33wjCY4IXp"
 //    private static let API_KEY = "KumZMHHA9GKHh8S8N7CqtUvEV8bI5lmg"
-    private static let API_KEY = "AWXEs1NcvKIXOvzgGIFWWMGAex2qkHnG"
+//    private static let API_KEY = "AWXEs1NcvKIXOvzgGIFWWMGAex2qkHnG"
+    private static let API_KEY = "9GbgJxFuBCIwEIj9K3VSsjrzwd1SVLXX"
 
     func request(with baseURL: URL) -> URLRequest {
         var request = URLRequest(url: baseURL)
@@ -66,10 +67,9 @@ public class NetworkRepository {
     static func getHourlyForecast(cityKey: String) -> Observable<[HourForecast]> {
         RxAlamofire.json(.get, "\(BASE_PATH)/forecasts\(API_VERSION)hourly/12hour/\(cityKey)?apikey=\(API_KEY)&metric=true")
                 .mapArray(type: HourForecast.self)
-
     }
 
-    static func getFutureForecast(cityKey: String) -> Observable<DayForecast> {//
+    static func getDailyForecast(cityKey: String) -> Observable<DayForecast> {//
         RxAlamofire.json(.get, "\(BASE_PATH)/forecasts\(API_VERSION)daily/5day/\(cityKey)?apikey=\(API_KEY)&metric=true")
                 .mapObject(type: DayForecast.self)
     }
