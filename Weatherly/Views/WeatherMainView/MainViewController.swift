@@ -37,8 +37,9 @@ class MainViewController: UIViewController {
         return searchBar
     }()
 
-    var searchResultsTableView: ContentSizedTableView = {
-        let searchResultsTableView = ContentSizedTableView()
+    var searchResultsTableView: ContentSizedUITableView = {
+        let searchResultsTableView = ContentSizedUITableView()
+
         searchResultsTableView.register(UITableViewCell.self, forCellReuseIdentifier: "SearchResultsTableViewCellIdentifier")
         searchResultsTableView.round()
         searchResultsTableView.translatesAutoresizingMaskIntoConstraints = false

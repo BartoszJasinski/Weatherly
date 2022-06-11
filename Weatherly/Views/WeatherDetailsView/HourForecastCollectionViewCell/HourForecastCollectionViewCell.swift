@@ -12,7 +12,7 @@ class HourForecastCollectionViewCell: UICollectionViewCell {
         weatherImageView.contentMode = .scaleAspectFit
 
         if #available(iOS 13.0, *) {
-            weatherImageView.image = SharedEnums.PrecipitationMode.init(precipitation: "").icon
+            weatherImageView.image = SharedEnums.PrecipitationMode.init(precipitationType: "").icon
         } else {
             // Fallback on earlier versions
         }

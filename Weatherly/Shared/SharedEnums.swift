@@ -41,9 +41,12 @@ final class SharedEnums {
     enum PrecipitationMode {
         case sun, rain, ice, cloud, snow, none
 
-        //TODO: FIX INITIALIZATION
-        init(precipitation: String?) {
-            switch precipitation {
+        // IT HAS TO BE DONE THIS WAY, BECAUSE NOT ALL PRECIPITATION STATES ARE HANDLED BY PrecipitationType FIELD SO I HAVE TO CHECK ADDITIONAL FIELDS
+        init(precipitationType: String?) {
+//            if IconPhrase
+
+
+            switch precipitationType {
             case "Rain":
                 self = .rain
             case "Snow":

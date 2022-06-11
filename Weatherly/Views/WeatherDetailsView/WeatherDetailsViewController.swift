@@ -29,19 +29,23 @@ class WeatherDetailsViewController: UIViewController {
 
         hourlyForecastCollectionView.register(HourForecastCollectionViewCell.self, forCellWithReuseIdentifier: "HourForecastCollectionViewCellIdentifier")
 
-        hourlyForecastCollectionView.backgroundColor = .clear/*.white.withAlphaComponent(UIConstants.viewOpacityLevel)*/
+        hourlyForecastCollectionView.backgroundColor = .clear
         hourlyForecastCollectionView.showsHorizontalScrollIndicator = false
-        hourlyForecastCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        hourlyForecastCollectionView.addBackgroundBlur()
         hourlyForecastCollectionView.round()
+        hourlyForecastCollectionView.translatesAutoresizingMaskIntoConstraints = false
 
         return hourlyForecastCollectionView
     }()
 
-    var dailyForecastTableView: ContentSizedTableView = {
-        let dailyForecastTableView = ContentSizedTableView()
+    var dailyForecastTableView: ContentSizedUITableView = {
+        let dailyForecastTableView = ContentSizedUITableView()
+
         dailyForecastTableView.register(DailyForecastTableViewCell.self, forCellReuseIdentifier: "DailyForecastTableViewCellIdentifier")
+
         dailyForecastTableView.backgroundColor = .clear
         dailyForecastTableView.separatorStyle = .none
+        dailyForecastTableView.addBackgroundBlur()
         dailyForecastTableView.round()
 
         dailyForecastTableView.translatesAutoresizingMaskIntoConstraints = false
@@ -93,12 +97,7 @@ class WeatherDetailsViewController: UIViewController {
         ])
 
         view.addSubview(hourlyForecastCollectionView)
-        let visualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .light))
 
-        visualEffectView.frame = hourlyForecastCollectionView.bounds
-        visualEffectView.autoresizingMask = .flexibleWidth
-//        hourlyForecastCollectionView.addSubview(visualEffectView)
-        hourlyForecastCollectionView.backgroundView = visualEffectView
         NSLayoutConstraint.activate([
             hourlyForecastCollectionView.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor),
             hourlyForecastCollectionView.topAnchor.constraint(equalTo: weatherDescriptionLabel.layoutMarginsGuide.topAnchor, constant: 100),
@@ -108,17 +107,11 @@ class WeatherDetailsViewController: UIViewController {
 
 
         view.addSubview(dailyForecastTableView)
-        let visualEffectView2 = UIVisualEffectView(effect: UIBlurEffect(style: .light))
 
-        visualEffectView2.frame = hourlyForecastCollectionView.bounds
-        visualEffectView2.autoresizingMask = .flexibleWidth
-//        hourlyForecastCollectionView.addSubview(visualEffectView)
-        dailyForecastTableView.backgroundView = visualEffectView2
         NSLayoutConstraint.activate([
             dailyForecastTableView.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor),
             dailyForecastTableView.topAnchor.constraint(equalTo: hourlyForecastCollectionView.layoutMarginsGuide.bottomAnchor, constant: UIConstants.marginMedium),
             dailyForecastTableView.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor),
-//            dailyForecastTableView.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor)
         ])
         dailyForecastTableView.backgroundColor = .clear
         dailyForecastTableView.separatorColor = .clear
@@ -181,19 +174,4 @@ class WeatherDetailsViewController: UIViewController {
     }
 
 
-}
-
-import UIKit
-
-final class ContentSizedTableView: UITableView {
-    override var contentSize: CGSize {
-        didSet {
-            invalidateIntrinsicContentSize()
-        }
-    }
-
-    override var intrinsicContentSize: CGSize {
-        layoutIfNeeded()
-        return CGSize(width: UIView.noIntrinsicMetric, height: contentSize.height)
-    }
 }
