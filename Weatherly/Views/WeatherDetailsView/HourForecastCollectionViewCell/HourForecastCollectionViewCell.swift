@@ -4,24 +4,22 @@
 
 import UIKit
 
-//TODO ROUND ALL TEMPERATURES TO WHOLE NUMBERS
-class HourForecastCollectionViewCell: UICollectionViewCell
-{
+class HourForecastCollectionViewCell: UICollectionViewCell {
     let hourLabel = UILabel().setupLook()
 
     let weatherImageView: UIImageView = {
-        let imageView = UIImageView()
+        let weatherImageView = UIImageView()
+        weatherImageView.contentMode = .scaleAspectFit
 
         if #available(iOS 13.0, *) {
-            //TODO: CREATE COLORING FUNCTION
-            imageView.image = UIImage(systemName: "sun.max.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal)
+            weatherImageView.image = SharedEnums.PrecipitationMode.init(precipitation: "").icon
         } else {
             // Fallback on earlier versions
         }
 
-        imageView.translatesAutoresizingMaskIntoConstraints = false
+        weatherImageView.translatesAutoresizingMaskIntoConstraints = false
 
-        return imageView
+        return weatherImageView
     }()
 
     let temperatureLabel = UILabel().setupLook()
@@ -38,7 +36,7 @@ class HourForecastCollectionViewCell: UICollectionViewCell
     }
 
     func setupSubviews(){
-        contentView.backgroundColor = .brown
+        contentView.backgroundColor = .clear
 
         contentView.addSubview(hourLabel)
         contentView.addSubview(weatherImageView)

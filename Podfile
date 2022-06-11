@@ -9,8 +9,6 @@ target 'Weatherly' do
   pod 'RxSwift'
   pod 'RxCocoa'
   pod 'RxAlamofire'
-  pod 'TPKeyboardAvoiding'
-  pod 'Charts'
   pod 'ObjectMapper'
 
   target 'WeatherlyTests' do

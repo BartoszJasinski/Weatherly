@@ -11,12 +11,8 @@ import RxRelay
 
 
 class WeatherDetailsViewController: UIViewController {
-    var backgroundImageView: UIImageView = {
-        let  backgroundImageView = UIImageView()
-        backgroundImageView.image = UIImage(named: "rainyImage")
 
-        return backgroundImageView
-    }()
+    var backgroundImageView = UIImageView(image: UIImage(named: "rainyImage"))
 
     var cityLabel = UILabel(font: .systemFont(ofSize: UIConstants.mediumFontSize))
     var temperatureLabel = UILabel(font: .systemFont(ofSize: UIConstants.bigFontSize, weight: .light))
@@ -33,7 +29,7 @@ class WeatherDetailsViewController: UIViewController {
 
         hourlyForecastCollectionView.register(HourForecastCollectionViewCell.self, forCellWithReuseIdentifier: "HourForecastCollectionViewCellIdentifier")
 
-        hourlyForecastCollectionView.backgroundColor = .white.withAlphaComponent(UIConstants.viewOpacityLevel)
+        hourlyForecastCollectionView.backgroundColor = .clear/*.white.withAlphaComponent(UIConstants.viewOpacityLevel)*/
         hourlyForecastCollectionView.showsHorizontalScrollIndicator = false
         hourlyForecastCollectionView.translatesAutoresizingMaskIntoConstraints = false
         hourlyForecastCollectionView.round()
@@ -41,10 +37,13 @@ class WeatherDetailsViewController: UIViewController {
         return hourlyForecastCollectionView
     }()
 
-    var dailyForecastTableView: UITableView = {
-        let dailyForecastTableView = UITableView()
+    var dailyForecastTableView: ContentSizedTableView = {
+        let dailyForecastTableView = ContentSizedTableView()
         dailyForecastTableView.register(DailyForecastTableViewCell.self, forCellReuseIdentifier: "DailyForecastTableViewCellIdentifier")
+        dailyForecastTableView.backgroundColor = .clear
+        dailyForecastTableView.separatorStyle = .none
         dailyForecastTableView.round()
+
         dailyForecastTableView.translatesAutoresizingMaskIntoConstraints = false
 
         return dailyForecastTableView
@@ -73,7 +72,7 @@ class WeatherDetailsViewController: UIViewController {
             cityLabel.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor),
             cityLabel.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor, constant: UIConstants.marginBig),
             cityLabel.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor),
-            cityLabel.heightAnchor.constraint(equalToConstant: UIConstants.labelHeight)
+            cityLabel.heightAnchor.constraint(equalToConstant: UIConstants.mediumHeight)
         ])
 
 
@@ -82,7 +81,7 @@ class WeatherDetailsViewController: UIViewController {
             temperatureLabel.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor),
             temperatureLabel.topAnchor.constraint(equalTo: cityLabel.bottomAnchor, constant: UIConstants.marginMedium),
             temperatureLabel.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor),
-            temperatureLabel.heightAnchor.constraint(equalToConstant: UIConstants.labelHeight)
+            temperatureLabel.heightAnchor.constraint(equalToConstant: UIConstants.mediumHeight)
         ])
 
         view.addSubview(weatherDescriptionLabel)
@@ -90,13 +89,16 @@ class WeatherDetailsViewController: UIViewController {
             weatherDescriptionLabel.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor),
             weatherDescriptionLabel.topAnchor.constraint(equalTo: temperatureLabel.safeAreaLayoutGuide.bottomAnchor),
             weatherDescriptionLabel.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor),
-            weatherDescriptionLabel.heightAnchor.constraint(equalToConstant: UIConstants.labelHeight)
+            weatherDescriptionLabel.heightAnchor.constraint(equalToConstant: UIConstants.mediumHeight)
         ])
 
-
-//        hourlyForecastCollectionView.round()
-
         view.addSubview(hourlyForecastCollectionView)
+        let visualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .light))
+
+        visualEffectView.frame = hourlyForecastCollectionView.bounds
+        visualEffectView.autoresizingMask = .flexibleWidth
+//        hourlyForecastCollectionView.addSubview(visualEffectView)
+        hourlyForecastCollectionView.backgroundView = visualEffectView
         NSLayoutConstraint.activate([
             hourlyForecastCollectionView.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor),
             hourlyForecastCollectionView.topAnchor.constraint(equalTo: weatherDescriptionLabel.layoutMarginsGuide.topAnchor, constant: 100),
@@ -106,14 +108,20 @@ class WeatherDetailsViewController: UIViewController {
 
 
         view.addSubview(dailyForecastTableView)
+        let visualEffectView2 = UIVisualEffectView(effect: UIBlurEffect(style: .light))
+
+        visualEffectView2.frame = hourlyForecastCollectionView.bounds
+        visualEffectView2.autoresizingMask = .flexibleWidth
+//        hourlyForecastCollectionView.addSubview(visualEffectView)
+        dailyForecastTableView.backgroundView = visualEffectView2
         NSLayoutConstraint.activate([
             dailyForecastTableView.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor),
             dailyForecastTableView.topAnchor.constraint(equalTo: hourlyForecastCollectionView.layoutMarginsGuide.bottomAnchor, constant: UIConstants.marginMedium),
             dailyForecastTableView.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor),
-            dailyForecastTableView.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor)
+//            dailyForecastTableView.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor)
         ])
-        dailyForecastTableView.backgroundColor = .white.withAlphaComponent(UIConstants.viewOpacityLevel)
-
+        dailyForecastTableView.backgroundColor = .clear
+        dailyForecastTableView.separatorColor = .clear
     }
 
     override func viewDidLoad() {
@@ -124,18 +132,21 @@ class WeatherDetailsViewController: UIViewController {
                 { (_, model: HourForecast, cell: HourForecastCollectionViewCell) in
                     cell.temperatureLabel.text = model.temperature?.valueFormatted
                     cell.temperatureLabel.textColor = SharedEnums.TemperatureMode(temperature: model.temperature?.value ?? 0.0).color
-                    cell.hourLabel.text = DateUtils.getComponentOutOfDate(dateText: model.dateTime ?? "", component: .hour) + ":00"
+                    cell.hourLabel.text = Date.getComponentOutOfDate(dateText: model.dateTime ?? "", component: .hour) + ":00"
                 }
                 .disposed(by: disposeBag)
 
         dailyForecastArray.asObservable().bind(to: dailyForecastTableView.rx.items(cellIdentifier: "DailyForecastTableViewCellIdentifier"))
                 { (_, model: WeatherConditions, cell: DailyForecastTableViewCell) in
-                    cell.dateLabel.text = "\(DateUtils.getComponentOutOfDate(dateText: model.date ?? "", component: .day)).\(DateUtils.getComponentOutOfDate(dateText: model.date ?? "", component: .month))"
+                    cell.dateLabel.text = Date.getWeekDay(dateText: model.date ?? "")
                     cell.lowestTemperatureLabel.text = model.temperature?.minimum?.valueFormatted
+                    cell.lowestTemperatureLabel.textColor = SharedEnums.TemperatureMode(temperature: model.temperature?.minimum?.value ?? 0.0).color
+
                     cell.highestTemperatureLabel.text = model.temperature?.maximum?.valueFormatted
+                    cell.highestTemperatureLabel.textColor = SharedEnums.TemperatureMode(temperature: model.temperature?.maximum?.value ?? 0.0).color
+                    cell.backgroundColor = .clear//.white.withAlphaComponent(UIConstants.viewOpacityLevel)
                 }
                 .disposed(by: disposeBag)
-
 
         getCurrentWeather(cityKey: cityKey)
         getHourlyForecast(cityKey: cityKey)
@@ -156,7 +167,6 @@ class WeatherDetailsViewController: UIViewController {
     {
         NetworkRepository.getHourlyForecast(cityKey: cityKey).subscribe(onNext: { [self] hourForecasts in
                     hourForecastArray.accept(hourForecasts)
-//                    hourlyForecastCollectionView.reloadData()
                 })
                 .disposed(by: disposeBag)
     }
@@ -171,4 +181,19 @@ class WeatherDetailsViewController: UIViewController {
     }
 
 
+}
+
+import UIKit
+
+final class ContentSizedTableView: UITableView {
+    override var contentSize: CGSize {
+        didSet {
+            invalidateIntrinsicContentSize()
+        }
+    }
+
+    override var intrinsicContentSize: CGSize {
+        layoutIfNeeded()
+        return CGSize(width: UIView.noIntrinsicMetric, height: contentSize.height)
+    }
 }

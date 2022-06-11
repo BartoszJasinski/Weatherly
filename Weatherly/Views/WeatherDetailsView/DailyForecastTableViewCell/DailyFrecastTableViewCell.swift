@@ -5,25 +5,26 @@
 import UIKit
 
 class DailyForecastTableViewCell: UITableViewCell {
-    //TODO: create fucntions which setups UILABES etc. because you use many occurances of the same commands
     let dateLabel = UILabel().setupLook()
 
     let weatherImageView: UIImageView = {
-        let imageView = UIImageView()
+        let weatherImageView = UIImageView()
+        weatherImageView.contentMode = .left
 
         if #available(iOS 13.0, *) {
-            imageView.image = UIImage(systemName: "cloud.fill")?.withTintColor(.gray, renderingMode: .alwaysOriginal)
+            weatherImageView.image = SharedEnums.PrecipitationMode.init(precipitation: "").icon
         } else {
             // Fallback on earlier versions
         }
 
-        imageView.translatesAutoresizingMaskIntoConstraints = false
+        weatherImageView.translatesAutoresizingMaskIntoConstraints = false
 
-        return imageView
+        return weatherImageView
     }()
 
     let highestTemperatureLabel = UILabel().setupLook()
-    let lowestTemperatureLabel = UILabel().setupLook()
+    let lowestTemperatureLabel = UILabel(textColor: .lightGray)
+
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -36,8 +37,9 @@ class DailyForecastTableViewCell: UITableViewCell {
     }
 
 
-    func setupSubviews(){
-        contentView.backgroundColor = .brown
+    private func setupSubviews() {
+        contentView.heightAnchor.constraint(greaterThanOrEqualToConstant: UIConstants.smallHeight).isActive = true
+        contentView.backgroundColor = .clear
 
         contentView.addSubview(dateLabel)
         contentView.addSubview(weatherImageView)
@@ -46,26 +48,24 @@ class DailyForecastTableViewCell: UITableViewCell {
 
         NSLayoutConstraint.activate([
             dateLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
-            dateLabel.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.2),
+            dateLabel.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.3),
             dateLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             dateLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor)
         ])
 
         NSLayoutConstraint.activate([
             weatherImageView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            weatherImageView.rightAnchor.constraint(equalTo: highestTemperatureLabel.safeAreaLayoutGuide.rightAnchor),
+            weatherImageView.rightAnchor.constraint(equalTo: highestTemperatureLabel.safeAreaLayoutGuide.leftAnchor),
             weatherImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            weatherImageView.leftAnchor.constraint(equalTo: dateLabel.safeAreaLayoutGuide.leftAnchor)
+            weatherImageView.leftAnchor.constraint(equalTo: dateLabel.safeAreaLayoutGuide.rightAnchor, constant: UIConstants.marginMedium)
         ])
-
 
         NSLayoutConstraint.activate([
             highestTemperatureLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
             highestTemperatureLabel.rightAnchor.constraint(equalTo: lowestTemperatureLabel.leftAnchor),
             highestTemperatureLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            highestTemperatureLabel.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.2),
+            highestTemperatureLabel.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.1),
         ])
-
 
         NSLayoutConstraint.activate([
             lowestTemperatureLabel.topAnchor.constraint(equalTo: contentView.topAnchor),

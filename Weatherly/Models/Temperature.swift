@@ -7,6 +7,7 @@ import ObjectMapper
 
 class Temperature: Mappable {
     var value: Double?
+    //TODO: MAYBE PUT IT INTO MODELS
     var valueFormatted = ""
     var unit: String?
 

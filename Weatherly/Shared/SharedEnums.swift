@@ -5,10 +5,9 @@
 import UIKit
 
 
-final class SharedEnums
-{
-    enum TemperatureMode
-    {
+final class SharedEnums {
+
+    enum TemperatureMode {
         case low
         case medium
         case high
@@ -42,6 +41,7 @@ final class SharedEnums
     enum PrecipitationMode {
         case sun, rain, ice, cloud, snow, none
 
+        //TODO: FIX INITIALIZATION
         init(precipitation: String?) {
             switch precipitation {
             case "Rain":
@@ -58,14 +58,15 @@ final class SharedEnums
         }
 
 
+        @available(iOS 13.0, *)
         var icon: UIImage {
             switch self {
-            case .sun: return UIImage(named: "sun.max.fill")!
-            case .rain: return UIImage(named: "cloud.rain.fill")!
-            case .cloud: return UIImage(named: "cloud.fill")!
-            case .snow: return UIImage(named: "cloud.snow.fill")!
-            case .ice: return UIImage(named: "cloud.snow.fill")!
-            case .none: return  UIImage(named: "sun.min")!
+            case .sun: return (UIImage(systemName: "sun.max")?.withTintColor(.systemYellow, renderingMode: .alwaysOriginal))!
+            case .rain: return (UIImage(systemName: "cloud.rain")?.withTintColor(.systemBlue, renderingMode: .alwaysOriginal))!
+            case .cloud: return (UIImage(systemName: "cloud")?.withTintColor(.white, renderingMode: .alwaysOriginal))!
+            case .snow: return (UIImage(systemName: "snow")?.withTintColor(.white, renderingMode: .alwaysOriginal))!
+            case .ice: return (UIImage(systemName: "snow")?.withTintColor(.white, renderingMode: .alwaysOriginal))!
+            case .none: return  (UIImage(systemName: "sun.max")?.withTintColor(.white, renderingMode: .alwaysOriginal))!
             }
         }
 

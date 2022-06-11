@@ -10,13 +10,8 @@ import RxSwift
 import RxCocoa
 
 class MainViewController: UIViewController {
-        
-    var backgroundImageView: UIImageView = {
-        let  backgroundImageView = UIImageView()
-        backgroundImageView.image = UIImage(named: "gradient")
 
-        return backgroundImageView
-    }()
+    var backgroundImageView = UIImageView(image: UIImage(named: "gradient"))
 
     var topLabel: UILabel = {
         let topLabel = UILabel(font: .systemFont(ofSize: UIConstants.mediumFontSize, weight: .bold))
@@ -28,10 +23,10 @@ class MainViewController: UIViewController {
     var searchBar: UISearchBar = {
         let searchBar = UISearchBar()
         searchBar.round()
-        searchBar.backgroundColor = .white.withAlphaComponent(UIConstants.transparentView)
+        searchBar.backgroundColor = .clear
 
         if #available(iOS 13.0, *) {
-            searchBar.searchTextField.backgroundColor = .white.withAlphaComponent(UIConstants.transparentView)
+            searchBar.searchTextField.backgroundColor = .clear
         } else {
             // Fallback on earlier versions
         }
@@ -42,8 +37,8 @@ class MainViewController: UIViewController {
         return searchBar
     }()
 
-    var searchResultsTableView: UITableView = {
-        let searchResultsTableView = UITableView()
+    var searchResultsTableView: ContentSizedTableView = {
+        let searchResultsTableView = ContentSizedTableView()
         searchResultsTableView.register(UITableViewCell.self, forCellReuseIdentifier: "SearchResultsTableViewCellIdentifier")
         searchResultsTableView.round()
         searchResultsTableView.translatesAutoresizingMaskIntoConstraints = false
@@ -70,8 +65,14 @@ class MainViewController: UIViewController {
         super.viewDidLoad()
 
         locationsArray.asObservable()
-                .bind(to: searchResultsTableView.rx.items(cellIdentifier: "SearchResultsTableViewCellIdentifier")) { (_, model: Location, cell: UITableViewCell) in
+                .bind(to: searchResultsTableView.rx.items(cellIdentifier: "SearchResultsTableViewCellIdentifier"))
+                { (_, model: Location, cell: UITableViewCell) in
                     cell.textLabel?.text = "\(model.localizedName ?? ""), \(model.countryName ?? "")"
+                    let visualEffectView2 = UIVisualEffectView(effect: UIBlurEffect(style: .light))
+                    cell.backgroundColor = .clear
+                    visualEffectView2.frame = cell.bounds
+                    visualEffectView2.autoresizingMask = .flexibleWidth
+                    cell.backgroundView = visualEffectView2
                 }
                 .disposed(by: disposeBag)
 
@@ -127,10 +128,8 @@ class MainViewController: UIViewController {
             searchResultsTableView.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor),
             searchResultsTableView.topAnchor.constraint(equalTo: searchBar.layoutMarginsGuide.bottomAnchor, constant: UIConstants.marginMedium),
             searchResultsTableView.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor),
-//            searchResultsTableView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.5),
-            searchResultsTableView.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor)
         ])
-        searchResultsTableView.backgroundColor = .white.withAlphaComponent(UIConstants.transparentView)
+        searchResultsTableView.backgroundColor = .clear
 
     }
 
@@ -139,14 +138,10 @@ class MainViewController: UIViewController {
 
 
 extension MainViewController {
-    func getListOfCities(city: String)
-    {
-        NetworkRepository.getCitiesMatchingName(city: city).subscribe(onNext: { [self] locations in
-                    locationsArray.accept(locations)
-                }).disposed(by: disposeBag)
+    func getListOfCities(city: String) {
+        NetworkRepository.getCitiesMatchingName(city: city).subscribe(onNext: { [self] locations in locationsArray.accept(locations)})
+                .disposed(by: disposeBag)
     }
-
-
 
 }
 

@@ -12,9 +12,11 @@ import CoreData
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
+    var window: UIWindow?
+
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
-        let launchScreenVisibilityTime = 0.0
+        let launchScreenVisibilityTime = 2.0
         Thread.sleep(forTimeInterval: launchScreenVisibilityTime)
 
         return true

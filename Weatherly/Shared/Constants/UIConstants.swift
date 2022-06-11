@@ -7,8 +7,6 @@ import UIKit
 final class UIConstants {
     // Corner
     static let cornerRadius: CGFloat = 12.0
-    static let mediumCornerRadius: CGFloat = 6.0
-    static let smallCornerRadius: CGFloat = 4.0
 
     // Border
     static let borderSize: CGFloat = 1.0
@@ -43,16 +41,12 @@ final class UIConstants {
 
     // Opacity
     static let viewOpacityLevel = 0.2
-    static let transparentView = 0.0
 
-    // Label
-    static let labelHeight: CGFloat = 50
+    // Height
+    static let mediumHeight: CGFloat = 50
+    static let smallHeight: CGFloat = 40
 
     // Search input
-    static let minimumSearchTextLength = 3
     static let debounceTime: Int = 700
-
-    // Table view
-    static let distanceFromTableViewBottomWhenRefresh = UIScreen.main.bounds.size.width / 4
 
 }
