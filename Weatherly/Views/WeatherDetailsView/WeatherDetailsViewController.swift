@@ -9,6 +9,7 @@ import UIKit
 import RxSwift
 import RxRelay
 
+
 class WeatherDetailsViewController: UIViewController {
     var backgroundImageView: UIImageView = {
         let  backgroundImageView = UIImageView()
@@ -17,55 +18,32 @@ class WeatherDetailsViewController: UIViewController {
         return backgroundImageView
     }()
 
-    var cityLabel: UILabel = {
-        let cityLabel = UILabel()
-        cityLabel.font = .systemFont(ofSize: 40)
-        cityLabel.textAlignment = .center
-        cityLabel.textColor = .white
-        cityLabel.translatesAutoresizingMaskIntoConstraints = false
-
-        return cityLabel
-    }()
-
-    var temperatureLabel: UILabel = {
-        let temperatureLabel = UILabel()
-        temperatureLabel.textAlignment = .center
-        temperatureLabel.font = .systemFont(ofSize: 70, weight: .light)
-        temperatureLabel.translatesAutoresizingMaskIntoConstraints = false
-
-        return temperatureLabel
-    }()
-
-    var weatherDescriptionLabel: UILabel = {
-        let weatherDescriptionLabel = UILabel()
-        weatherDescriptionLabel.textAlignment = .center
-        weatherDescriptionLabel.font = .systemFont(ofSize: 20)
-        weatherDescriptionLabel.textColor = .white
-        weatherDescriptionLabel.translatesAutoresizingMaskIntoConstraints = false
-
-        return weatherDescriptionLabel
-    }()
+    var cityLabel = UILabel(font: .systemFont(ofSize: UIConstants.mediumFontSize))
+    var temperatureLabel = UILabel(font: .systemFont(ofSize: UIConstants.bigFontSize, weight: .light))
+    var weatherDescriptionLabel = UILabel(font: .systemFont(ofSize: UIConstants.smallFontSize))
 
     var hourlyForecastCollectionView: UICollectionView = {
         let collectionViewLayout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
-        collectionViewLayout.sectionInset = UIEdgeInsets(top: 20, left: 10, bottom: 10, right: 10)
-        collectionViewLayout.itemSize = CGSize(width: 60, height: 60)
+        collectionViewLayout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+        collectionViewLayout.itemSize = CGSize(width: 80, height: 80)
         collectionViewLayout.scrollDirection = .horizontal
 
-        let hourlyForecastCollectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: 0, height: 0), collectionViewLayout: collectionViewLayout)
+        let hourlyForecastCollectionView = UICollectionView(frame: CGRect(x: CGFloat.zero, y: .zero, width: .zero, height: .zero),
+                collectionViewLayout: collectionViewLayout)
 
-        hourlyForecastCollectionView.register(HourForecastCollectionViewCell.self, forCellWithReuseIdentifier: "MyCell")
+        hourlyForecastCollectionView.register(HourForecastCollectionViewCell.self, forCellWithReuseIdentifier: "HourForecastCollectionViewCellIdentifier")
 
-        hourlyForecastCollectionView.backgroundColor = .white.withAlphaComponent(0.2)
+        hourlyForecastCollectionView.backgroundColor = .white.withAlphaComponent(UIConstants.viewOpacityLevel)
         hourlyForecastCollectionView.showsHorizontalScrollIndicator = false
         hourlyForecastCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        hourlyForecastCollectionView.round()
 
         return hourlyForecastCollectionView
     }()
 
     var dailyForecastTableView: UITableView = {
         let dailyForecastTableView = UITableView()
-        dailyForecastTableView.register(DailyForecastTableViewCell.self, forCellReuseIdentifier: "MyCell")
+        dailyForecastTableView.register(DailyForecastTableViewCell.self, forCellReuseIdentifier: "DailyForecastTableViewCellIdentifier")
         dailyForecastTableView.round()
         dailyForecastTableView.translatesAutoresizingMaskIntoConstraints = false
 
@@ -93,32 +71,30 @@ class WeatherDetailsViewController: UIViewController {
 
         NSLayoutConstraint.activate([
             cityLabel.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor),
-            cityLabel.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor, constant: 40),
+            cityLabel.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor, constant: UIConstants.marginBig),
             cityLabel.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor),
-            cityLabel.heightAnchor.constraint(equalToConstant: 60)
+            cityLabel.heightAnchor.constraint(equalToConstant: UIConstants.labelHeight)
         ])
 
 
         view.addSubview(temperatureLabel)
         NSLayoutConstraint.activate([
             temperatureLabel.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor),
-            temperatureLabel.topAnchor.constraint(equalTo: cityLabel.bottomAnchor, constant: 20),
+            temperatureLabel.topAnchor.constraint(equalTo: cityLabel.bottomAnchor, constant: UIConstants.marginMedium),
             temperatureLabel.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor),
-            temperatureLabel.heightAnchor.constraint(equalToConstant: 60)
+            temperatureLabel.heightAnchor.constraint(equalToConstant: UIConstants.labelHeight)
         ])
-
 
         view.addSubview(weatherDescriptionLabel)
         NSLayoutConstraint.activate([
             weatherDescriptionLabel.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor),
-            weatherDescriptionLabel.topAnchor.constraint(equalTo: temperatureLabel.bottomAnchor, constant: 10),
+            weatherDescriptionLabel.topAnchor.constraint(equalTo: temperatureLabel.safeAreaLayoutGuide.bottomAnchor),
             weatherDescriptionLabel.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor),
-            weatherDescriptionLabel.heightAnchor.constraint(equalToConstant: 60)
+            weatherDescriptionLabel.heightAnchor.constraint(equalToConstant: UIConstants.labelHeight)
         ])
 
 
-        hourlyForecastCollectionView.round()
-
+//        hourlyForecastCollectionView.round()
 
         view.addSubview(hourlyForecastCollectionView)
         NSLayoutConstraint.activate([
@@ -132,11 +108,11 @@ class WeatherDetailsViewController: UIViewController {
         view.addSubview(dailyForecastTableView)
         NSLayoutConstraint.activate([
             dailyForecastTableView.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor),
-            dailyForecastTableView.topAnchor.constraint(equalTo: hourlyForecastCollectionView.layoutMarginsGuide.bottomAnchor, constant: 20),
+            dailyForecastTableView.topAnchor.constraint(equalTo: hourlyForecastCollectionView.layoutMarginsGuide.bottomAnchor, constant: UIConstants.marginMedium),
             dailyForecastTableView.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor),
             dailyForecastTableView.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor)
         ])
-        dailyForecastTableView.backgroundColor = .white.withAlphaComponent(0.2)
+        dailyForecastTableView.backgroundColor = .white.withAlphaComponent(UIConstants.viewOpacityLevel)
 
     }
 
@@ -144,17 +120,19 @@ class WeatherDetailsViewController: UIViewController {
         super.viewDidLoad()
 
 
-        hourForecastArray.asObservable().bind(to: hourlyForecastCollectionView.rx.items(cellIdentifier: "MyCell")) { (_, model: HourForecast, cell: HourForecastCollectionViewCell) in
-                    cell.temperatureLabel.text = "\(model.temperature?.value ?? 0.0)"
+        hourForecastArray.asObservable().bind(to: hourlyForecastCollectionView.rx.items(cellIdentifier: "HourForecastCollectionViewCellIdentifier"))
+                { (_, model: HourForecast, cell: HourForecastCollectionViewCell) in
+                    cell.temperatureLabel.text = model.temperature?.valueFormatted
                     cell.temperatureLabel.textColor = SharedEnums.TemperatureMode(temperature: model.temperature?.value ?? 0.0).color
                     cell.hourLabel.text = DateUtils.getComponentOutOfDate(dateText: model.dateTime ?? "", component: .hour) + ":00"
                 }
                 .disposed(by: disposeBag)
 
-        dailyForecastArray.asObservable().bind(to: dailyForecastTableView.rx.items(cellIdentifier: "MyCell")) { (_, model: WeatherConditions, cell: DailyForecastTableViewCell) in
+        dailyForecastArray.asObservable().bind(to: dailyForecastTableView.rx.items(cellIdentifier: "DailyForecastTableViewCellIdentifier"))
+                { (_, model: WeatherConditions, cell: DailyForecastTableViewCell) in
                     cell.dateLabel.text = "\(DateUtils.getComponentOutOfDate(dateText: model.date ?? "", component: .day)).\(DateUtils.getComponentOutOfDate(dateText: model.date ?? "", component: .month))"
-                    cell.lowestTemperatureLabel.text = "\(model.temperature?.minimum?.value ?? 0.0)"
-                    cell.highestTemperatureLabel.text = "\(model.temperature?.maximum?.value ?? 0.0)"
+                    cell.lowestTemperatureLabel.text = model.temperature?.minimum?.valueFormatted
+                    cell.highestTemperatureLabel.text = model.temperature?.maximum?.valueFormatted
                 }
                 .disposed(by: disposeBag)
 
@@ -167,10 +145,9 @@ class WeatherDetailsViewController: UIViewController {
 
     func getCurrentWeather(cityKey: String) {
         NetworkRepository.getCurrentWeather(cityId: cityKey).subscribe(onNext: { [self] currentConditions in
-                    print("getCurrentWeather = \(currentConditions.first?.temperature?.metric?.value ?? 0)")
                     temperatureLabel.textColor = SharedEnums.TemperatureMode(temperature: currentConditions.first?.temperature?.metric?.value ?? 0).color
-                    temperatureLabel.text = TemperatureUtils.formatTemperature(temperature: "\(currentConditions.first?.temperature?.metric?.value ?? 0)")
-                    weatherDescriptionLabel.text = currentConditions.first?.weatherText ?? "ABC"
+                    temperatureLabel.text = currentConditions.first?.temperature?.metric?.valueFormatted
+                    weatherDescriptionLabel.text = currentConditions.first?.weatherText ?? ""
                 })
                 .disposed(by: disposeBag)
     }
@@ -178,9 +155,8 @@ class WeatherDetailsViewController: UIViewController {
     func getHourlyForecast(cityKey: String)
     {
         NetworkRepository.getHourlyForecast(cityKey: cityKey).subscribe(onNext: { [self] hourForecasts in
-                    print("getHourlyForecast = \(hourForecasts.first?.temperature?.value ?? 0)")
                     hourForecastArray.accept(hourForecasts)
-                    hourlyForecastCollectionView.reloadData()
+//                    hourlyForecastCollectionView.reloadData()
                 })
                 .disposed(by: disposeBag)
     }
@@ -188,7 +164,6 @@ class WeatherDetailsViewController: UIViewController {
     func getDailyForecast(cityKey: String)
     {
         NetworkRepository.getDailyForecast(cityKey: cityKey).subscribe(onNext: { [self] weatherData in
-                    print("getFutureWeather = \(weatherData.dailyForecasts?[0].temperature?.minimum?.value ?? 0)")
                     guard let dailyForecasts = weatherData.dailyForecasts else { return }
                     dailyForecastArray.accept(dailyForecasts)
                 })

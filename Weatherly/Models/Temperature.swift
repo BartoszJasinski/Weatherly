@@ -7,6 +7,7 @@ import ObjectMapper
 
 class Temperature: Mappable {
     var value: Double?
+    var valueFormatted = ""
     var unit: String?
 
     required init?(map: Map) {
@@ -14,6 +15,10 @@ class Temperature: Mappable {
 
     func mapping(map: Map) {
         value <- map["Value"]
+        value?.round()
+
+        valueFormatted = value?.temperatureFormat ?? ""
+
         unit <- map["Unit"]
     }
 

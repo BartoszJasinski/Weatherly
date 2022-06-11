@@ -4,8 +4,7 @@
 
 import UIKit
 
-final class UIConstants
-{
+final class UIConstants {
     // Corner
     static let cornerRadius: CGFloat = 12.0
     static let mediumCornerRadius: CGFloat = 6.0
@@ -26,8 +25,8 @@ final class UIConstants
 
     // Margin
     static let marginSmall: CGFloat = 8
-    static let marginMedium: CGFloat = 16
-    static let marginBig: CGFloat = 32
+    static let marginMedium: CGFloat = 20
+    static let marginBig: CGFloat = 40
 
     // Text Field
     static let maxTextFieldLength = 9
@@ -36,8 +35,18 @@ final class UIConstants
     // Animation
     static let animationDuration = 0.2
 
-    // Section header
-//    static let headerFontSize: CGFloat = 14
+    // Font
+    static let bigFontSize: CGFloat = 70
+    static let mediumFontSize: CGFloat = 40
+    static let smallFontSize: CGFloat = 20
+    static let tinyFontSize: CGFloat = 14
+
+    // Opacity
+    static let viewOpacityLevel = 0.2
+    static let transparentView = 0.0
+
+    // Label
+    static let labelHeight: CGFloat = 50
 
     // Search input
     static let minimumSearchTextLength = 3
