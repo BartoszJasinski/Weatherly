@@ -17,11 +17,11 @@ public class NetworkRepository {
 
     private static let BASE_PATH = "https://dataservice.accuweather.com/"
     private static let API_VERSION = "/v1/"
-//    private static let API_KEY = "GIATuLsLemzJHcDfEAawtS33wjCY4IXp"
+    private static let API_KEY = "GIATuLsLemzJHcDfEAawtS33wjCY4IXp"
 //    private static let API_KEY = "KumZMHHA9GKHh8S8N7CqtUvEV8bI5lmg"
 //    private static let API_KEY = "AWXEs1NcvKIXOvzgGIFWWMGAex2qkHnG"
 //    private static let API_KEY = "9GbgJxFuBCIwEIj9K3VSsjrzwd1SVLXX"
-    private static let API_KEY = "AEczK8HNw5a5ACYUvAdxmMNu0AfF4IgI"
+//    private static let API_KEY = "AEczK8HNw5a5ACYUvAdxmMNu0AfF4IgI"
 
     func request(with baseURL: URL) -> URLRequest {
         var request = URLRequest(url: baseURL)

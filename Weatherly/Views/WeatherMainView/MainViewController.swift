@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreData
 import RxSwift
 import RxCocoa
 
