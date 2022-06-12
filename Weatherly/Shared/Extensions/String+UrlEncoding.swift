@@ -5,5 +5,5 @@
 import Foundation
 
 extension String {
-     var urlEncoding: String { addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? "" }
+     var urlEncoded: String { addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? "" }
 }

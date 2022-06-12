@@ -4,17 +4,17 @@
 
 import ObjectMapper
 
-class WeatherConditions: Mappable {
+struct WeatherConditions: Mappable {
     var date: String?
     var temperature: TemperatureForecast?
     var iconPhrase: String?
     var hasPrecipitation: Bool?
     var precipitationType: String?
 
-    required init?(map: Map) {
+    init?(map: Map) {
     }
 
-    func mapping(map: Map) {
+    mutating func mapping(map: Map) {
         date <- map["Date"]
         temperature <- map["Temperature"]
         iconPhrase <- map["Day.IconPhrase"]

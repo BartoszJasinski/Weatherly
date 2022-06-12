@@ -4,14 +4,14 @@
 
 import ObjectMapper
 
-class Country {
+struct Country {
     var id: String?
     var localizedName: String?
 
-    required init?(map: Map) {
+    init?(map: Map) {
     }
 
-    func mapping(map: Map) {
+    mutating func mapping(map: Map) {
         id <- map["ID"]
         localizedName <- map["LocalizedName"]
     }

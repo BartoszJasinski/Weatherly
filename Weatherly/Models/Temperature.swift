@@ -5,16 +5,15 @@
 import Foundation
 import ObjectMapper
 
-class Temperature: Mappable {
+struct Temperature: Mappable {
     var value: Double?
-    //TODO: MAYBE PUT IT INTO MODELS
     var valueFormatted = ""
     var unit: String?
 
-    required init?(map: Map) {
+    init?(map: Map) {
     }
 
-    func mapping(map: Map) {
+    mutating func mapping(map: Map) {
         value <- map["Value"]
         value?.round()
 
