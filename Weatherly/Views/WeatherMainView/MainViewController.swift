@@ -145,7 +145,7 @@ class MainViewController: UIViewController {
 
 extension MainViewController {
     func getListOfCities(city: String) {
-        NetworkRepository.getCitiesMatchingName(city: city).subscribe(onNext: { [self] locations in locationsArray.accept(locations)})
+        NetworkService.getCitiesMatchingName(city: city).subscribe(onNext: { [self] locations in locationsArray.accept(locations)})
                 .disposed(by: disposeBag)
     }
 

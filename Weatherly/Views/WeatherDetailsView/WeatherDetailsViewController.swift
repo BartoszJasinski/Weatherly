@@ -159,7 +159,7 @@ class WeatherDetailsViewController: UIViewController {
     }
 
     func getCurrentWeather(cityKey: String) {
-        NetworkRepository.getCurrentWeather(cityId: cityKey).subscribe(onNext: { [self] currentConditions in
+        NetworkService.getCurrentWeather(cityId: cityKey).subscribe(onNext: { [self] currentConditions in
                     backgroundImageView.image = SharedEnums
                             .PrecipitationMode(iconPhrase: currentConditions.first?.weatherText, precipitationType: currentConditions.first?.precipitationType).backgroundImage
 
@@ -173,7 +173,7 @@ class WeatherDetailsViewController: UIViewController {
 
     func getHourlyForecast(cityKey: String)
     {
-        NetworkRepository.getHourlyForecast(cityKey: cityKey).subscribe(onNext: { [self] hourForecasts in
+        NetworkService.getHourlyForecast(cityKey: cityKey).subscribe(onNext: { [self] hourForecasts in
                     hourForecastArray.accept(hourForecasts)
                 })
                 .disposed(by: disposeBag)
@@ -181,7 +181,7 @@ class WeatherDetailsViewController: UIViewController {
 
     func getDailyForecast(cityKey: String)
     {
-        NetworkRepository.getDailyForecast(cityKey: cityKey).subscribe(onNext: { [self] weatherData in
+        NetworkService.getDailyForecast(cityKey: cityKey).subscribe(onNext: { [self] weatherData in
                     guard let dailyForecasts = weatherData.dailyForecasts else { return }
                     dailyForecastArray.accept(dailyForecasts)
                 })
