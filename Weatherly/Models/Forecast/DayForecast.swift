@@ -19,7 +19,7 @@ class DayForecast: Mappable {
 
 extension ObservableType {
     public func mapObject<T: Mappable>(type: T.Type) -> Observable<T> {
-        return flatMap { data -> Observable<T> in
+        flatMap { data -> Observable<T> in
             let json: AnyObject? = data as AnyObject
             guard let object = Mapper<T>().map(JSONObject: json) else {
                 throw NSError(
@@ -34,7 +34,7 @@ extension ObservableType {
     }
 
     public func mapArray<T: Mappable>(type: T.Type) -> Observable<[T]> {
-        return flatMap { data -> Observable<[T]> in
+        flatMap { data -> Observable<[T]> in
             let json = data as AnyObject
             guard let objects = Mapper<T>().mapArray(JSONObject: json) else {
                 throw NSError(

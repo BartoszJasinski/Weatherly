@@ -7,16 +7,18 @@ import Foundation
 import ObjectMapper
 
 class CurrentConditions: Mappable {
-    var temperature: CurrentTemperature?
-    var hasPrecipitation: Bool?
     var weatherText: String?
+    var hasPrecipitation: Bool?
+    var precipitationType: String?
+    var temperature: CurrentTemperature?
 
     required init?(map: Map) {
     }
 
     func mapping(map: Map) {
-        temperature <- map["Temperature"]
-        hasPrecipitation <- map["HasPrecipitation"]
         weatherText <- map["WeatherText"]
+        hasPrecipitation <- map["HasPrecipitation"]
+        precipitationType <- map["PrecipitationType"]
+        temperature <- map["Temperature"]
     }
 }

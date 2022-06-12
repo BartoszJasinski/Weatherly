@@ -12,7 +12,7 @@ import RxRelay
 
 class WeatherDetailsViewController: UIViewController {
 
-    var backgroundImageView = UIImageView(image: UIImage(named: "rainyImage"))
+    var backgroundImageView = UIImageView(image: UIImage(named: "gradient"))
 
     var cityLabel = UILabel(font: .systemFont(ofSize: UIConstants.mediumFontSize))
     var temperatureLabel = UILabel(font: .systemFont(ofSize: UIConstants.bigFontSize, weight: .light))
@@ -120,24 +120,34 @@ class WeatherDetailsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-
         hourForecastArray.asObservable().bind(to: hourlyForecastCollectionView.rx.items(cellIdentifier: "HourForecastCollectionViewCellIdentifier"))
                 { (_, model: HourForecast, cell: HourForecastCollectionViewCell) in
+                    cell.hourLabel.text = Date.getComponentOutOfDate(dateText: model.dateTime ?? "", component: .hour) + ":00"
+
+                    if #available(iOS 13.0, *) {
+                        cell.weatherImageView.image = SharedEnums.PrecipitationMode.init(iconPhrase: model.iconPhrase, precipitationType: model.precipitationType).icon
+                    }
+
                     cell.temperatureLabel.text = model.temperature?.valueFormatted
                     cell.temperatureLabel.textColor = SharedEnums.TemperatureMode(temperature: model.temperature?.value ?? 0.0).color
-                    cell.hourLabel.text = Date.getComponentOutOfDate(dateText: model.dateTime ?? "", component: .hour) + ":00"
                 }
                 .disposed(by: disposeBag)
 
         dailyForecastArray.asObservable().bind(to: dailyForecastTableView.rx.items(cellIdentifier: "DailyForecastTableViewCellIdentifier"))
                 { (_, model: WeatherConditions, cell: DailyForecastTableViewCell) in
                     cell.dateLabel.text = Date.getWeekDay(dateText: model.date ?? "")
+
+                    if #available(iOS 13.0, *) {
+                        cell.weatherImageView.image = SharedEnums.PrecipitationMode.init(iconPhrase: model.iconPhrase, precipitationType: model.precipitationType).icon
+                    }
+
                     cell.lowestTemperatureLabel.text = model.temperature?.minimum?.valueFormatted
                     cell.lowestTemperatureLabel.textColor = SharedEnums.TemperatureMode(temperature: model.temperature?.minimum?.value ?? 0.0).color
 
                     cell.highestTemperatureLabel.text = model.temperature?.maximum?.valueFormatted
                     cell.highestTemperatureLabel.textColor = SharedEnums.TemperatureMode(temperature: model.temperature?.maximum?.value ?? 0.0).color
-                    cell.backgroundColor = .clear//.white.withAlphaComponent(UIConstants.viewOpacityLevel)
+                    cell.backgroundColor = .clear
+
                 }
                 .disposed(by: disposeBag)
 
@@ -149,8 +159,12 @@ class WeatherDetailsViewController: UIViewController {
 
     func getCurrentWeather(cityKey: String) {
         NetworkRepository.getCurrentWeather(cityId: cityKey).subscribe(onNext: { [self] currentConditions in
+                    backgroundImageView.image = SharedEnums
+                            .PrecipitationMode(iconPhrase: currentConditions.first?.weatherText, precipitationType: currentConditions.first?.precipitationType).backgroundImage
+
                     temperatureLabel.textColor = SharedEnums.TemperatureMode(temperature: currentConditions.first?.temperature?.metric?.value ?? 0).color
                     temperatureLabel.text = currentConditions.first?.temperature?.metric?.valueFormatted
+
                     weatherDescriptionLabel.text = currentConditions.first?.weatherText ?? ""
                 })
                 .disposed(by: disposeBag)

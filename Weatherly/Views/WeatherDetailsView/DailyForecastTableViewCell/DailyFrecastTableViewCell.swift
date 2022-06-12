@@ -9,14 +9,8 @@ class DailyForecastTableViewCell: UITableViewCell {
 
     let weatherImageView: UIImageView = {
         let weatherImageView = UIImageView()
+
         weatherImageView.contentMode = .left
-
-        if #available(iOS 13.0, *) {
-            weatherImageView.image = SharedEnums.PrecipitationMode.init(precipitationType: "").icon
-        } else {
-            // Fallback on earlier versions
-        }
-
         weatherImageView.translatesAutoresizingMaskIntoConstraints = false
 
         return weatherImageView

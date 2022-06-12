@@ -11,7 +11,6 @@ import RxSwift
 import RxCocoa
 
 class MainViewController: UIViewController {
-
     var backgroundImageView = UIImageView(image: UIImage(named: "gradient"))
 
     var topLabel: UILabel = {
@@ -57,8 +56,6 @@ class MainViewController: UIViewController {
     override func loadView() {
         super.loadView()
 
-        backgroundImageView.frame = view.frame
-        view.addSubview(backgroundImageView)
 
         setupUI()
     }
@@ -95,26 +92,19 @@ class MainViewController: UIViewController {
 
         //HACKY WAY OF HANDLING X IN A CIRCLE BUTTON CLICK AND ALSO CLEARING TABLEVIEW AFTER DELETING WHOLE TEXT
         searchBar.rx.text.bind(onNext: { [self] in
-                    if $0 == ""
-                    {
+                    if $0 == "" {
                         guard let searchHistory = CoreDataUtils.singleton.fetch() else { return }
                         locationsArray.accept(searchHistory)
                     }
                 }).disposed(by: disposeBag)
-
-        searchBar.rx.textDidBeginEditing.bind(onNext: { [self] in
-                    if searchBar.text == "" {
-                        guard let searchHistory = CoreDataUtils.singleton.fetch() else { return }
-                        locationsArray.accept(searchHistory)
-                    }
-                })
-                .disposed(by: disposeBag)
 
     }
 
 
 
     private func setupUI() {
+        backgroundImageView.frame = view.frame
+        view.addSubview(backgroundImageView)
 
         view.addSubview(topLabel)
         NSLayoutConstraint.activate([
