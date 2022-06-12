@@ -3,12 +3,20 @@
 //
 
 import ObjectMapper
+import CoreData
 
 class Location: Mappable {
     var key: String?
     var localizedName: String?
     var country: Country?
     var countryName: String?
+
+    init(managedObject: NSManagedObject) {
+        key = managedObject.value(forKey: CoreDataUtils.Constants.key) as? String
+        localizedName = managedObject.value(forKey: CoreDataUtils.Constants.localizedName) as? String
+        country = nil
+        countryName = managedObject.value(forKey: CoreDataUtils.Constants.countryName) as? String
+    }
 
     required init?(map: Map) {
     }

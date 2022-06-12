@@ -82,6 +82,8 @@ class MainViewController: UIViewController {
                 .subscribe { [self] indexPath in
                     guard let row = indexPath.element?.row else { return }
 
+                    CoreDataUtils.singleton.saveUnique(location: locationsArray.value[row])
+
                     let storyboard = UIStoryboard(name: "WeatherDetails", bundle: nil)
                     let vc = storyboard.instantiateViewController(withIdentifier: "weatherDetailsVcId") as! WeatherDetailsViewController
                     vc.cityKey = locationsArray.value[row].key
@@ -93,8 +95,20 @@ class MainViewController: UIViewController {
 
         //HACKY WAY OF HANDLING X IN A CIRCLE BUTTON CLICK AND ALSO CLEARING TABLEVIEW AFTER DELETING WHOLE TEXT
         searchBar.rx.text.bind(onNext: { [self] in
-                    if $0 == "" { locationsArray.accept([]) }
+                    if $0 == ""
+                    {
+                        guard let searchHistory = CoreDataUtils.singleton.fetch() else { return }
+                        locationsArray.accept(searchHistory)
+                    }
                 }).disposed(by: disposeBag)
+
+        searchBar.rx.textDidBeginEditing.bind(onNext: { [self] in
+                    if searchBar.text == "" {
+                        guard let searchHistory = CoreDataUtils.singleton.fetch() else { return }
+                        locationsArray.accept(searchHistory)
+                    }
+                })
+                .disposed(by: disposeBag)
 
     }
 
