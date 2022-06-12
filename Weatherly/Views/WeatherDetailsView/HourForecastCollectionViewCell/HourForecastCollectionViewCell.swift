@@ -29,7 +29,9 @@ class HourForecastCollectionViewCell: UICollectionViewCell {
         setupSubviews()
     }
 
-    func setupSubviews(){
+
+    // MARK: UI Setup
+    private func setupSubviews(){
         contentView.backgroundColor = .clear
 
         contentView.addSubview(hourLabel)

@@ -67,6 +67,7 @@ class WeatherDetailsViewController: UIViewController {
         super.loadView()
 
         backgroundImageView.frame = view.frame
+        backgroundImageView.contentMode = .scaleAspectFill
         view.addSubview(backgroundImageView)
 
         cityLabel.text = cityName

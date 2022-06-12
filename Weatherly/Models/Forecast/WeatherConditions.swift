@@ -17,8 +17,8 @@ class WeatherConditions: Mappable {
     func mapping(map: Map) {
         date <- map["Date"]
         temperature <- map["Temperature"]
-        iconPhrase <- map["IconPhrase"]
-        hasPrecipitation <- map["HasPrecipitation"]
-        precipitationType <- map["PrecipitationType"]
+        iconPhrase <- map["Day.IconPhrase"]
+        hasPrecipitation <- map["Day.HasPrecipitation"]
+        precipitationType <- map["Day.PrecipitationType"]
     }
 }

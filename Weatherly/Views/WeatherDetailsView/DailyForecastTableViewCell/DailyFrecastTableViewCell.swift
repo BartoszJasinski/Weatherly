@@ -30,7 +30,7 @@ class DailyForecastTableViewCell: UITableViewCell {
         setupSubviews()
     }
 
-
+    // MARK: UI Setup
     private func setupSubviews() {
         contentView.heightAnchor.constraint(greaterThanOrEqualToConstant: UIConstants.smallHeight).isActive = true
         contentView.backgroundColor = .clear
