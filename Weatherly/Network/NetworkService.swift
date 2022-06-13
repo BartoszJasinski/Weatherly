@@ -10,16 +10,17 @@ import ObjectMapper
 import UIKit
 
 struct NetworkService {
-    //TODO: CHECK FOR HTTP ERRORS
     private static let BASE_URL = "https://dataservice.accuweather.com/"
     private static let API_VERSION = "v1/"
 
 //    private static let API_KEY = "GIATuLsLemzJHcDfEAawtS33wjCY4IXp"
 //    private static let API_KEY = "KumZMHHA9GKHh8S8N7CqtUvEV8bI5lmg"
-    private static let API_KEY = "AWXEs1NcvKIXOvzgGIFWWMGAex2qkHnG"
+//    private static let API_KEY = "AWXEs1NcvKIXOvzgGIFWWMGAex2qkHnG"
 //    private static let API_KEY = "9GbgJxFuBCIwEIj9K3VSsjrzwd1SVLXX"
 //    private static let API_KEY = "AEczK8HNw5a5ACYUvAdxmMNu0AfF4IgI"
 //    private static let API_KEY = "N8TOmpbSKJB1GV43PEO7cJUMl32T7aBu"
+//    private static let API_KEY = "k1COTalPGbYGIzAY4X3m8Ad9hDZizUbh"
+    private static let API_KEY = "JwAnYTfVAJ0PW2I6x9h14y48TKYZVTbm"
 
     // MARK: URL ENDPOINTS
     private static let locations = "locations/"

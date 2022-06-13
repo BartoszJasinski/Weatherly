@@ -122,7 +122,7 @@ class MainViewController: UIViewController {
 
         searchBar.rx.text.debounce(.milliseconds(UIConstants.debounceTime), scheduler: MainScheduler.instance)
                 .subscribe(onNext: { [self] in
-                    if let city = $0 { mainViewModel.getListOfCities(city: city) }
+                    if let city = $0, $0 != "" { mainViewModel.getListOfCities(city: city) }
                 })
                 .disposed(by: disposeBag)
 
