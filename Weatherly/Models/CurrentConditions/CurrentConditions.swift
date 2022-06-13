@@ -10,6 +10,9 @@ struct CurrentConditions: Mappable {
     var precipitationType: String?
     var temperature: CurrentTemperature?
 
+    init() {
+    }
+
     init?(map: Map) {
     }
 

@@ -19,6 +19,9 @@ class DailyForecastTableViewCell: UITableViewCell {
     let highestTemperatureLabel = UILabel().setupLook()
     let lowestTemperatureLabel = UILabel(textColor: .lightGray)
 
+    var viewModel: DailyForecastTableViewModel? {
+        didSet { fillWithData() }
+    }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -69,8 +72,46 @@ class DailyForecastTableViewCell: UITableViewCell {
             lowestTemperatureLabel.leftAnchor.constraint(equalTo: lowestTemperatureLabel.rightAnchor)
         ])
 
-
     }
 
+    private func fillWithData() {
+        dateLabel.text = viewModel?.dateText
 
+        if #available(iOS 13.0, *) {
+            weatherImageView.image = viewModel?.weatherImage
+        }
+
+        lowestTemperatureLabel.text = viewModel?.lowestTemperatureText
+        lowestTemperatureLabel.textColor = viewModel?.lowestTemperatureColor
+
+        highestTemperatureLabel.text = viewModel?.highestTemperatureText
+        highestTemperatureLabel.textColor = viewModel?.highestTemperatureColor
+        backgroundColor = .clear
+    }
+
+}
+
+
+class DailyForecastTableViewModel {
+    let dateText: String
+    let weatherImage: UIImage?
+    let lowestTemperatureText: String
+    let lowestTemperatureColor: UIColor
+    let highestTemperatureText: String
+    let highestTemperatureColor: UIColor
+
+    init(weatherConditions: WeatherConditions) {
+        dateText = Date.getWeekDay(dateText: weatherConditions.date ?? "")
+
+        if #available(iOS 13.0, *) {
+            weatherImage = SharedEnums.PrecipitationMode.init(iconPhrase: weatherConditions.iconPhrase, precipitationType: weatherConditions.precipitationType).icon
+        } else {
+            weatherImage = nil
+        }
+
+        lowestTemperatureText = weatherConditions.temperature?.minimum?.valueFormatted ?? ""
+        lowestTemperatureColor = SharedEnums.TemperatureMode(temperature: weatherConditions.temperature?.minimum?.value ?? 0.0).color
+        highestTemperatureText = weatherConditions.temperature?.maximum?.valueFormatted ?? ""
+        highestTemperatureColor = SharedEnums.TemperatureMode(temperature: weatherConditions.temperature?.maximum?.value ?? 0.0).color
+    }
 }

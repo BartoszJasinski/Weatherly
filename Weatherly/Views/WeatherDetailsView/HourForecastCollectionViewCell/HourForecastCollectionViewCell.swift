@@ -18,6 +18,9 @@ class HourForecastCollectionViewCell: UICollectionViewCell {
 
     let temperatureLabel = UILabel().setupLook()
 
+    var viewModel: HourForecastCollectionViewModel? {
+        didSet { fillWithData() }
+    }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -60,4 +63,37 @@ class HourForecastCollectionViewCell: UICollectionViewCell {
         ])
     }
 
+    private func fillWithData() {
+        hourLabel.text = viewModel?.hourText
+
+        if #available(iOS 13.0, *) {
+            weatherImageView.image = viewModel?.weatherImage
+        }
+
+        temperatureLabel.text = viewModel?.temperatureText
+        temperatureLabel.textColor = viewModel?.temperatureColor
+    }
+
+}
+
+
+class HourForecastCollectionViewModel {
+    let hourText: String
+    let weatherImage: UIImage?
+    let temperatureText: String
+    let temperatureColor: UIColor
+
+    init(hourForecast: HourForecast) {
+        hourText = Date.getComponentOutOfDate(dateText: hourForecast.dateTime ?? "", component: .hour) + ":00"
+
+        if #available(iOS 13.0, *) {
+            weatherImage = SharedEnums.PrecipitationMode.init(iconPhrase: hourForecast.iconPhrase, precipitationType: hourForecast.precipitationType).icon
+        } else {
+            weatherImage = nil
+        }
+
+
+        temperatureText = hourForecast.temperature?.valueFormatted ?? ""
+        temperatureColor = SharedEnums.TemperatureMode(temperature: hourForecast.temperature?.value ?? 0.0).color
+    }
 }

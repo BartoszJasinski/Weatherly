@@ -76,10 +76,10 @@ class MainViewController: UIViewController {
                     mainViewModel.saveLocation(row: row)
 
                     let storyboard = UIStoryboard(name: "WeatherDetails", bundle: nil)
-                    let vc = storyboard.instantiateViewController(withIdentifier: "weatherDetailsVcId") as! WeatherDetailsViewController
-                    vc.cityKey = mainViewModel.locationsArray.value[row].key
-                    vc.cityName = mainViewModel.locationsArray.value[row].localizedName
-                    present(vc, animated: true)
+                    let weatherDetailsViewController = storyboard.instantiateViewController(withIdentifier: "weatherDetailsVcId") as! WeatherDetailsViewController
+                    weatherDetailsViewController.weatherDetailsViewModel =
+                            WeatherDetailsViewModel(mainViewModel.locationsArray.value[row].key!, mainViewModel.locationsArray.value[row].localizedName!)
+                    present(weatherDetailsViewController, animated: true)
                 }
                 .disposed(by: disposeBag)
 

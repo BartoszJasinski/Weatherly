@@ -8,7 +8,7 @@
 import UIKit
 import RxSwift
 import RxRelay
-
+import RxCocoa
 
 class WeatherDetailsViewController: UIViewController {
 
@@ -51,14 +51,9 @@ class WeatherDetailsViewController: UIViewController {
         return dailyForecastTableView
     }()
 
+    var weatherDetailsViewModel: WeatherDetailsViewModel!
 
     var disposeBag: DisposeBag = DisposeBag()
-
-    var cityKey: String!
-    var cityName: String!
-
-    private let hourForecastArray: BehaviorRelay<[HourForecast]> = BehaviorRelay(value: [])
-    private let dailyForecastArray: BehaviorRelay<[WeatherConditions]> = BehaviorRelay(value: [])
 
 
     override func loadView() {
@@ -66,10 +61,18 @@ class WeatherDetailsViewController: UIViewController {
 
         backgroundImageView.frame = view.frame
         backgroundImageView.contentMode = .scaleAspectFill
-        view.addSubview(backgroundImageView)
 
-        cityLabel.text = cityName
+        cityLabel.text = weatherDetailsViewModel.cityName
+
+        dailyForecastTableView.backgroundColor = .clear
+        dailyForecastTableView.separatorColor = .clear
+
+        view.addSubview(backgroundImageView)
         view.addSubview(cityLabel)
+        view.addSubview(temperatureLabel)
+        view.addSubview(weatherDescriptionLabel)
+        view.addSubview(hourlyForecastCollectionView)
+        view.addSubview(dailyForecastTableView)
 
         NSLayoutConstraint.activate([
             cityLabel.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor),
@@ -79,7 +82,6 @@ class WeatherDetailsViewController: UIViewController {
         ])
 
 
-        view.addSubview(temperatureLabel)
         NSLayoutConstraint.activate([
             temperatureLabel.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor),
             temperatureLabel.topAnchor.constraint(equalTo: cityLabel.bottomAnchor, constant: UIConstants.marginMedium),
@@ -87,15 +89,12 @@ class WeatherDetailsViewController: UIViewController {
             temperatureLabel.heightAnchor.constraint(equalToConstant: UIConstants.mediumHeight)
         ])
 
-        view.addSubview(weatherDescriptionLabel)
         NSLayoutConstraint.activate([
             weatherDescriptionLabel.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor),
             weatherDescriptionLabel.topAnchor.constraint(equalTo: temperatureLabel.safeAreaLayoutGuide.bottomAnchor),
             weatherDescriptionLabel.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor),
             weatherDescriptionLabel.heightAnchor.constraint(equalToConstant: UIConstants.mediumHeight)
         ])
-
-        view.addSubview(hourlyForecastCollectionView)
 
         NSLayoutConstraint.activate([
             hourlyForecastCollectionView.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor),
@@ -104,87 +103,40 @@ class WeatherDetailsViewController: UIViewController {
             hourlyForecastCollectionView.heightAnchor.constraint(equalToConstant: 100)
         ])
 
-
-        view.addSubview(dailyForecastTableView)
-
         NSLayoutConstraint.activate([
             dailyForecastTableView.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor),
             dailyForecastTableView.topAnchor.constraint(equalTo: hourlyForecastCollectionView.layoutMarginsGuide.bottomAnchor, constant: UIConstants.marginMedium),
             dailyForecastTableView.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor),
         ])
-        dailyForecastTableView.backgroundColor = .clear
-        dailyForecastTableView.separatorColor = .clear
+
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        hourForecastArray.asObservable().bind(to: hourlyForecastCollectionView.rx.items(cellIdentifier: "HourForecastCollectionViewCellIdentifier"))
+        weatherDetailsViewModel.currentConditions.asObservable().bind { [self] conditions in
+                backgroundImageView.image = SharedEnums
+                    .PrecipitationMode(iconPhrase: conditions.weatherText, precipitationType: conditions.precipitationType).backgroundImage
+
+                    temperatureLabel.textColor = SharedEnums.TemperatureMode(temperature: conditions.temperature?.metric?.value ?? 0).color
+                    temperatureLabel.text = conditions.temperature?.metric?.valueFormatted
+
+                    weatherDescriptionLabel.text = conditions.weatherText ?? ""
+        }.disposed(by: disposeBag)
+
+
+        weatherDetailsViewModel.hourForecastArray.asObservable().bind(to: hourlyForecastCollectionView.rx.items(cellIdentifier: "HourForecastCollectionViewCellIdentifier"))
                 { (_, model: HourForecast, cell: HourForecastCollectionViewCell) in
-                    cell.hourLabel.text = Date.getComponentOutOfDate(dateText: model.dateTime ?? "", component: .hour) + ":00"
-
-                    if #available(iOS 13.0, *) {
-                        cell.weatherImageView.image = SharedEnums.PrecipitationMode.init(iconPhrase: model.iconPhrase, precipitationType: model.precipitationType).icon
-                    }
-
-                    cell.temperatureLabel.text = model.temperature?.valueFormatted
-                    cell.temperatureLabel.textColor = SharedEnums.TemperatureMode(temperature: model.temperature?.value ?? 0.0).color
+                    cell.viewModel = HourForecastCollectionViewModel(hourForecast: model)
                 }
                 .disposed(by: disposeBag)
 
-        dailyForecastArray.asObservable().bind(to: dailyForecastTableView.rx.items(cellIdentifier: "DailyForecastTableViewCellIdentifier"))
+        weatherDetailsViewModel.dailyForecastArray.asObservable().bind(to: dailyForecastTableView.rx.items(cellIdentifier: "DailyForecastTableViewCellIdentifier"))
                 { (_, model: WeatherConditions, cell: DailyForecastTableViewCell) in
-                    cell.dateLabel.text = Date.getWeekDay(dateText: model.date ?? "")
-
-                    if #available(iOS 13.0, *) {
-                        cell.weatherImageView.image = SharedEnums.PrecipitationMode.init(iconPhrase: model.iconPhrase, precipitationType: model.precipitationType).icon
-                    }
-
-                    cell.lowestTemperatureLabel.text = model.temperature?.minimum?.valueFormatted
-                    cell.lowestTemperatureLabel.textColor = SharedEnums.TemperatureMode(temperature: model.temperature?.minimum?.value ?? 0.0).color
-
-                    cell.highestTemperatureLabel.text = model.temperature?.maximum?.valueFormatted
-                    cell.highestTemperatureLabel.textColor = SharedEnums.TemperatureMode(temperature: model.temperature?.maximum?.value ?? 0.0).color
-                    cell.backgroundColor = .clear
-
+                    cell.viewModel = DailyForecastTableViewModel(weatherConditions: model)
                 }
                 .disposed(by: disposeBag)
 
-        getCurrentWeather(cityKey: cityKey)
-        getHourlyForecast(cityKey: cityKey)
-        getDailyForecast(cityKey: cityKey)
-
     }
-
-    func getCurrentWeather(cityKey: String) {
-        NetworkService.getCurrentWeather(cityId: cityKey).subscribe(onNext: { [self] currentConditions in
-                    backgroundImageView.image = SharedEnums
-                            .PrecipitationMode(iconPhrase: currentConditions.first?.weatherText, precipitationType: currentConditions.first?.precipitationType).backgroundImage
-
-                    temperatureLabel.textColor = SharedEnums.TemperatureMode(temperature: currentConditions.first?.temperature?.metric?.value ?? 0).color
-                    temperatureLabel.text = currentConditions.first?.temperature?.metric?.valueFormatted
-
-                    weatherDescriptionLabel.text = currentConditions.first?.weatherText ?? ""
-                })
-                .disposed(by: disposeBag)
-    }
-
-    func getHourlyForecast(cityKey: String)
-    {
-        NetworkService.getHourlyForecast(cityKey: cityKey).subscribe(onNext: { [self] hourForecasts in
-                    hourForecastArray.accept(hourForecasts)
-                })
-                .disposed(by: disposeBag)
-    }
-
-    func getDailyForecast(cityKey: String)
-    {
-        NetworkService.getDailyForecast(cityKey: cityKey).subscribe(onNext: { [self] weatherData in
-                    guard let dailyForecasts = weatherData.dailyForecasts else { return }
-                    dailyForecastArray.accept(dailyForecasts)
-                })
-                .disposed(by: disposeBag)
-    }
-
 
 }
