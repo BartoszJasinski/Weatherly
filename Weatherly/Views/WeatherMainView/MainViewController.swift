@@ -47,15 +47,13 @@ class MainViewController: UIViewController {
         return searchResultsTableView
     }()
 
-    private var locationsTableView: UITableView!
+    private var mainViewModel = MainViewModel()
 
-    var disposeBag: DisposeBag = DisposeBag()
+    private let disposeBag = DisposeBag()
 
-    private let locationsArray: BehaviorRelay<[Location]> = BehaviorRelay(value: [])
 
     override func loadView() {
         super.loadView()
-
 
         setupUI()
     }
@@ -63,15 +61,11 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        locationsArray.asObservable()
+        mainViewModel.locationsArray.asObservable()
                 .bind(to: searchResultsTableView.rx.items(cellIdentifier: "SearchResultsTableViewCellIdentifier"))
                 { (_, model: Location, cell: UITableViewCell) in
                     cell.textLabel?.text = "\(model.localizedName ?? ""), \(model.countryName ?? "")"
-                    let visualEffectView2 = UIVisualEffectView(effect: UIBlurEffect(style: .light))
-                    cell.backgroundColor = .clear
-                    visualEffectView2.frame = cell.bounds
-                    visualEffectView2.autoresizingMask = .flexibleWidth
-                    cell.backgroundView = visualEffectView2
+                    cell.addBackgroundBlur()
                 }
                 .disposed(by: disposeBag)
 
@@ -79,12 +73,12 @@ class MainViewController: UIViewController {
                 .subscribe { [self] indexPath in
                     guard let row = indexPath.element?.row else { return }
 
-                    CoreDataUtils.singleton.saveUnique(location: locationsArray.value[row])
+                    mainViewModel.saveLocation(row: row)
 
                     let storyboard = UIStoryboard(name: "WeatherDetails", bundle: nil)
                     let vc = storyboard.instantiateViewController(withIdentifier: "weatherDetailsVcId") as! WeatherDetailsViewController
-                    vc.cityKey = locationsArray.value[row].key
-                    vc.cityName = locationsArray.value[row].localizedName
+                    vc.cityKey = mainViewModel.locationsArray.value[row].key
+                    vc.cityName = mainViewModel.locationsArray.value[row].localizedName
                     present(vc, animated: true)
                 }
                 .disposed(by: disposeBag)
@@ -92,61 +86,46 @@ class MainViewController: UIViewController {
 
         //HACKY WAY OF HANDLING X IN A CIRCLE BUTTON CLICK AND ALSO CLEARING TABLEVIEW AFTER DELETING WHOLE TEXT
         searchBar.rx.text.bind(onNext: { [self] in
-                    if $0 == "" {
-                        guard let searchHistory = CoreDataUtils.singleton.fetch() else { return }
-                        locationsArray.accept(searchHistory)
-                    }
+                    if $0 == "" { mainViewModel.getSearchHistory() }
                 }).disposed(by: disposeBag)
 
     }
 
-
-
     private func setupUI() {
         backgroundImageView.frame = view.frame
-        view.addSubview(backgroundImageView)
+        searchResultsTableView.backgroundColor = .clear
 
+        view.addSubview(backgroundImageView)
         view.addSubview(topLabel)
+        view.addSubview(searchResultsTableView)
+        view.addSubview(searchBar)
+
         NSLayoutConstraint.activate([
             topLabel.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor),
             topLabel.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor),
             topLabel.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor),
-            topLabel.heightAnchor.constraint(equalToConstant: 50)
+            topLabel.heightAnchor.constraint(equalToConstant: UIConstants.mediumHeight)
         ])
 
-        view.addSubview(searchBar)
         NSLayoutConstraint.activate([
             searchBar.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor),
             searchBar.topAnchor.constraint(equalTo: topLabel.layoutMarginsGuide.bottomAnchor, constant: UIConstants.marginMedium),
             searchBar.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor),
-            searchBar.heightAnchor.constraint(equalToConstant: 50)
+            searchBar.heightAnchor.constraint(equalToConstant: UIConstants.mediumHeight)
         ])
 
-        searchBar.rx.text.debounce(.milliseconds(UIConstants.debounceTime), scheduler: MainScheduler.instance)
-                .subscribe(onNext: { [self] in
-                    if let city = $0 { getListOfCities(city: city) }
-                })
-                .disposed(by: disposeBag)
-
-
-        view.addSubview(searchResultsTableView)
         NSLayoutConstraint.activate([
             searchResultsTableView.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor),
             searchResultsTableView.topAnchor.constraint(equalTo: searchBar.layoutMarginsGuide.bottomAnchor, constant: UIConstants.marginMedium),
             searchResultsTableView.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor),
         ])
-        searchResultsTableView.backgroundColor = .clear
 
-    }
-
-
-}
-
-
-extension MainViewController {
-    func getListOfCities(city: String) {
-        NetworkService.getCitiesMatchingName(city: city).subscribe(onNext: { [self] locations in locationsArray.accept(locations)})
+        searchBar.rx.text.debounce(.milliseconds(UIConstants.debounceTime), scheduler: MainScheduler.instance)
+                .subscribe(onNext: { [self] in
+                    if let city = $0 { mainViewModel.getListOfCities(city: city) }
+                })
                 .disposed(by: disposeBag)
+
     }
 
 }

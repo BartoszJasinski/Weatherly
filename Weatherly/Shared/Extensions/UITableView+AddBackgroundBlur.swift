@@ -6,6 +6,7 @@ import UIKit
 
 extension UITableView {
     func addBackgroundBlur() {
+        backgroundColor = .clear
         let visualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .light))
         visualEffectView.frame = bounds
         backgroundView = visualEffectView

@@ -29,7 +29,6 @@ class WeatherDetailsViewController: UIViewController {
 
         hourlyForecastCollectionView.register(HourForecastCollectionViewCell.self, forCellWithReuseIdentifier: "HourForecastCollectionViewCellIdentifier")
 
-        hourlyForecastCollectionView.backgroundColor = .clear
         hourlyForecastCollectionView.showsHorizontalScrollIndicator = false
         hourlyForecastCollectionView.addBackgroundBlur()
         hourlyForecastCollectionView.round()
@@ -43,7 +42,6 @@ class WeatherDetailsViewController: UIViewController {
 
         dailyForecastTableView.register(DailyForecastTableViewCell.self, forCellReuseIdentifier: "DailyForecastTableViewCellIdentifier")
 
-        dailyForecastTableView.backgroundColor = .clear
         dailyForecastTableView.separatorStyle = .none
         dailyForecastTableView.addBackgroundBlur()
         dailyForecastTableView.round()

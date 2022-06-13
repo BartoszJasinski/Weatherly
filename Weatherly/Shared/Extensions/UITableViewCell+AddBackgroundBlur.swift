@@ -1,10 +1,10 @@
 //
-// Created by ITT on 11/06/2022.
+// Created by ITT on 13/06/2022.
 //
 
 import UIKit
 
-extension UICollectionView {
+extension UITableViewCell {
     func addBackgroundBlur() {
         backgroundColor = .clear
         let visualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .light))

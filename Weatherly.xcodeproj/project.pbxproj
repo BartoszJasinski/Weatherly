@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		198A901F0BA39304CA7AB442 /* HourForecast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 198A920BA979B31A7C017810 /* HourForecast.swift */; };
 		198A913109BF7ED90722DC9F /* Temperature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 198A9BA7D219F3050E735B25 /* Temperature.swift */; };
-		198A925EC7B02796DA36295D /* MainModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 198A9554E301BA9DA83C9DF6 /* MainModel.swift */; };
 		198A927E54631036EFD23357 /* DailyFrecastTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 198A99D6FE16C83397B93C6F /* DailyFrecastTableViewCell.swift */; };
 		198A933D3A642AFDD681AACF /* CoreDateUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 198A9AFA53F3A3F798065FC4 /* CoreDateUtils.swift */; };
 		198A94E2D323BB4CF0E00585 /* UISearchBar+Look.swift in Sources */ = {isa = PBXBuildFile; fileRef = 198A92C1C21721D3D9307B35 /* UISearchBar+Look.swift */; };
@@ -27,6 +26,7 @@
 		198A98750D910A4A95781908 /* Date+FormatDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 198A92BCA98B9B6A0C42BCB1 /* Date+FormatDate.swift */; };
 		198A9876982FAF395F67B910 /* String+TemperatureFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 198A9130109A65C7FEB27D74 /* String+TemperatureFormat.swift */; };
 		198A99792E49448EF9362013 /* UILabel+Init.swift in Sources */ = {isa = PBXBuildFile; fileRef = 198A910AAAE50EC11F8D4203 /* UILabel+Init.swift */; };
+		198A99B796799C89D51E1126 /* UITableViewCell+AddBackgroundBlur.swift in Sources */ = {isa = PBXBuildFile; fileRef = 198A958DA9B8C9112192448D /* UITableViewCell+AddBackgroundBlur.swift */; };
 		198A9A5A5BC3DE2C6CEDF4C7 /* ObservableType+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 198A946BF30CB0E3F9D350FA /* ObservableType+Ext.swift */; };
 		198A9AC720C5973F824952BC /* UITableView+AddBackgroundBlur.swift in Sources */ = {isa = PBXBuildFile; fileRef = 198A90F7A39215311C4A845F /* UITableView+AddBackgroundBlur.swift */; };
 		198A9B093A1023E66CD5AD35 /* CurrentConditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 198A959614343F348AE1A9E8 /* CurrentConditions.swift */; };
@@ -86,7 +86,7 @@
 		198A9315A210EC3F9F4C976E /* String+UrlEncoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+UrlEncoding.swift"; sourceTree = "<group>"; };
 		198A946BF30CB0E3F9D350FA /* ObservableType+Ext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ObservableType+Ext.swift"; sourceTree = "<group>"; };
 		198A9545138807EE210573AE /* GradientView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientView.swift; sourceTree = "<group>"; };
-		198A9554E301BA9DA83C9DF6 /* MainModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainModel.swift; sourceTree = "<group>"; };
+		198A958DA9B8C9112192448D /* UITableViewCell+AddBackgroundBlur.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITableViewCell+AddBackgroundBlur.swift"; sourceTree = "<group>"; };
 		198A959614343F348AE1A9E8 /* CurrentConditions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentConditions.swift; sourceTree = "<group>"; };
 		198A967C6BE36981C7D46A70 /* DayForecast.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DayForecast.swift; sourceTree = "<group>"; };
 		198A97207BE4A0023C9D657B /* UIConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIConstants.swift; sourceTree = "<group>"; };
@@ -239,7 +239,6 @@
 			children = (
 				198A9D1B18B7F9BFEF82C925 /* Main.storyboard */,
 				198A985844207EBC2861DA48 /* MainViewController.swift */,
-				198A9554E301BA9DA83C9DF6 /* MainModel.swift */,
 				198A92287C5CBA593C0405B8 /* MainViewModel.swift */,
 			);
 			path = WeatherMainView;
@@ -282,6 +281,7 @@
 				198A9076E5DE9EC9FAE20BF3 /* UICollectionView+AddBackgroundBlur.swift */,
 				198A90F7A39215311C4A845F /* UITableView+AddBackgroundBlur.swift */,
 				198A946BF30CB0E3F9D350FA /* ObservableType+Ext.swift */,
+				198A958DA9B8C9112192448D /* UITableViewCell+AddBackgroundBlur.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -620,7 +620,6 @@
 				198A94E2D323BB4CF0E00585 /* UISearchBar+Look.swift in Sources */,
 				198A97ED7DA0854B2C962909 /* MeasurmentUtils.swift in Sources */,
 				198A983083D617FB3446AB02 /* MainViewController.swift in Sources */,
-				198A925EC7B02796DA36295D /* MainModel.swift in Sources */,
 				198A9B8735F5E735B6B8E7F3 /* MainViewModel.swift in Sources */,
 				198A9EF5346E7371F5F255BF /* String+UrlEncoding.swift in Sources */,
 				198A94F0954E1BD08021FE47 /* Location.swift in Sources */,
@@ -643,6 +642,7 @@
 				198A95E1B8B90F7D5AF1AE20 /* ContentSizedUITableView.swift in Sources */,
 				198A933D3A642AFDD681AACF /* CoreDateUtils.swift in Sources */,
 				198A9A5A5BC3DE2C6CEDF4C7 /* ObservableType+Ext.swift in Sources */,
+				198A99B796799C89D51E1126 /* UITableViewCell+AddBackgroundBlur.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
